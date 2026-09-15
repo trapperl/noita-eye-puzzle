@@ -1,4 +1,4 @@
-# noita-eye-analysis
+# noita-eye-puzzle
 
 Statistical fingerprinting of the unsolved Noita eye-glyph cipher. Instead of guessing keys,
 this project enciphers real text with candidate cipher machines and compares the resulting

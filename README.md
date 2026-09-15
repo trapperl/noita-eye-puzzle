@@ -41,6 +41,9 @@ python3 robust.py en nospace         # key-stability of the surviving family
 python3 mech3.py en nospace          # second family
 python3 mech4.py en nospace          # two-deck family
 python3 mech5.py en nospace          # conditional-alphabet family (small-state bound)
+gcc -O2 -o sweep sweep.c -lm && ./sweep ../corpus/en.idx ../corpus/en.meta ../corpus/target.txt > ../results/sweep_en.txt
+                                     # 565k-config layout sweep (~5 min); run python3 export_corpus.py first
+python3 sweep_verify.py en nospace 300   # independent re-scoring of the top sweep configs
 ```
 
 Each script takes a language (`en`, `fi`) and `space` or `nospace` for whether the plaintext

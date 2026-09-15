@@ -172,10 +172,40 @@ particular random layout fit the eye curve to deviance 6 on 8 degrees of freedom
 nothing. The real machine, if it is in this family, has a structured layout that was not
 among the ones tried (contiguous, spaced by 2, 3 or 4).
 
+### 4.1 Exhaustive slot-layout sweep of the surviving family
+
+To settle whether a structured slot layout rescues the non-rotating move-to-depth deck, a C
+implementation (`harness/sweep.c`) enumerated every arithmetic-progression layout: slot of
+letter j = (a + s * rank(j)) mod 83 with offset a in 0..82, spacing s in 1..41, rank either
+alphabetical or by corpus frequency, and every insertion depth k in 0..82. That is 564,898
+configurations per language, each run with three random decks over 12,000 symbols of text
+(English without spaces; Finnish with spaces). Selection statistic: Poisson deviance of the
+eye counts at distances 1..8 against the configuration's mean curve, with the spread of the
+distance-4 ratio across decks as a stability check (`results/sweep_*_top.txt`).
+
+With half a million trials the best deviances (2.4 English, 4.3 Finnish, on 8 degrees of
+freedom) are what chance produces, so the top 300 stable configurations per language were
+re-scored on statistics they were not selected on (`harness/sweep_verify.py`,
+`results/sweepv_*.txt`): re-match after a 4-letter change, index of coincidence, and the
+distance tail 9..24 against the deduplicated target.
+
+Result: every one of the 600 configurations re-matches at 0.29-0.40 after a 4-letter change
+(target 0.55; distribution: 421 at ~0.3, 178 at ~0.4, 1 at 0.2). The tail deviance is the
+same as a flat curve for all of them, so it neither helps nor hurts. **The re-match rate of
+this family is a property of the mechanism, capped near 0.4 for a 4-letter change, and no
+layout changes it.** The family survives only if East 4 and East 5 differ by fewer than four
+letters in positions 22..25 (a one-letter change re-matches at 0.57-0.66 in this family),
+which the ciphertext alone cannot decide: all three of E4, W4, E5 differ pairwise at 22, 24
+and 25, with single coincidences at 23 (W4/E5) and 25 (E4/W4).
+
+Layouts and depths that fit the distance curve in both languages cluster at spacings 4, 10,
+18, 38 and 40, but with no re-match discrimination this is not evidence of anything.
+
 ## 5. What remains open
 
-- The mechanism. Non-rotating single-card-move decks with an unknown slot layout are the
-  surviving shape; nothing else tried survives. Multi-component machines were tried only
+- The mechanism. Non-rotating single-card-move decks are the surviving shape, but only if
+  the E4/E5 divergence is a one- or two-letter plaintext change; their re-match rate is
+  capped near 0.4 for four changed letters whatever the layout (4.1). Multi-component machines were tried only
   because of the tail at 9/13/17, which section 2.5 shows to be mostly a double-counting
   artefact.
 - The plaintext language and alphabet size. Nothing here distinguishes English from
@@ -186,10 +216,10 @@ among the ones tried (contiguous, spaced by 2, 3 or 4).
 
 1. Read the community progress document before doing anything else; it was not reachable
    from the environment that produced this analysis.
-2. If pursuing the surviving family: search structured slot layouts (arithmetic progressions
-   with offset, two interleaved progressions, layouts derived from a keyword) for one whose
-   distance curve matches d = 1..8 stably across random decks, then attack the initial deck
-   order for that layout. This is a constraint problem, not an n-gram hill-climb: decrypting
+2. The arithmetic-progression layout search is done (4.1) and did not discriminate. What
+   would: pinning down how many letters differ between E4 and E5 at 22..25, since the
+   surviving family predicts 0.6 re-match for one changed letter and 0.35 for four. A
+   plaintext template hypothesis (numbered entries, East/West variants) is the way in. This is a constraint problem, not an n-gram hill-climb: decrypting
    under a candidate initial deck must visit only slot positions.
 3. Use E4/E5 more precisely: the pattern of exactly which positions re-match after the
    divergence (runs of three, then a miss) is a direct measurement of how many cards one

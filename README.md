@@ -39,6 +39,8 @@ python3 resync.py en nospace         # re-match fingerprint
 python3 joint.py en nospace          # both fingerprints together (reads ../results/rs_*.txt)
 python3 robust.py en nospace         # key-stability of the surviving family
 python3 mech3.py en nospace          # second family
+python3 mech4.py en nospace          # two-deck family
+python3 mech5.py en nospace          # conditional-alphabet family (small-state bound)
 ```
 
 Each script takes a language (`en`, `fi`) and `space` or `nospace` for whether the plaintext

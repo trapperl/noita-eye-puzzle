@@ -115,7 +115,7 @@ the re-match rate over the 20 positions after a 4-letter plaintext change (targe
 Fingerprint (a) is a property of the mechanism, independent of key and text, only when it
 is stable across random keys; the robustness sweep (`results/rb_*.txt`) checks that.
 
-**Families tested** (about 1500 variants, `harness/mech.py`, `mech2.py`, `mech3.py`):
+**Families tested** (about 1500 variants, `harness/mech.py`, `mech2.py`, `mech3.py`, `mech4.py`, `mech5.py`):
 
 - Lookup decks: output the card at a fixed per-letter slot, then move that card (to a fixed
   depth, to a relative depth, by swap, with or without a cut of the deck to the output
@@ -125,6 +125,12 @@ is stable across random keys; the robustness sweep (`results/rb_*.txt`) checks t
 - Cut decks: rotate the deck by a per-letter amount, output the top, bury it.
 - Chaocipher generalised to 83 cells with a homophonic plaintext disk; equal and unequal
   nadirs; ciphertext-disk-only variants.
+- Two-deck machines: a keyed letter deck and a keyed symbol deck, output the symbol at the
+  letter's index, then move the letter (to back, front, a depth, a swap, a rotation) and the
+  symbol (to a depth, relative depth, swap, back, front); also with a homophonic letter deck.
+- Conditional alphabets: m substitution alphabets selected by the class of the previous
+  ciphertext symbol or previous plaintext letter, with alphabets drawing from any symbol,
+  excluding their own class (no doubles by design), or from the next class in a ring.
 - Controls: position-keyed random substitution, random group autokey over S83, additive
   ciphertext-feedback streams.
 
@@ -140,6 +146,17 @@ is stable across random keys; the robustness sweep (`results/rb_*.txt`) checks t
 | non-rotating move-to-depth k, structured slots | stable across keys, but d1..d6 never matches | 0.31-0.37 | excluded on curve |
 | non-rotating move-to-depth k, random slots | can match perfectly, but the curve depends on the slot layout: d4 ratio ranges 0.0-5.5 across keys | 0.33-0.35 | not excluded, not supported |
 | rotation-plus-move, two-move, letter-depth, moving nadir | never both | <= 0.33 | excluded |
+| two-deck (letter deck + symbol deck, same index, each deck moved by a simple rule) | best stable variants have no distance-4 peak (d4 = 0.85) | 0.33-0.35 | excluded on curve |
+| conditional alphabets (previous ciphertext or plaintext class selects one of m alphabets, m = 2..10) | uniformly elevated at every distance (1.3-2.5), no peak | 0.54-0.96 | excluded on curve |
+
+The conditional-alphabet result gives a quantitative bound. With m alphabets the ciphertext
+repeat ratio at every distance is roughly 83 x (plaintext letter coincidence, ~0.065) / m,
+which is 1.3 even at m = 10. The eye data sit at 1.00 +/- 0.1 for distances 5 to 8, so the
+plaintext letter statistics are fully hidden there: the machine's effective number of
+distinguishable states is at least about 50, and no small-state polyalphabetic (rotor
+stepping, ciphertext-selected or plaintext-selected alphabets, short-period keys) can
+produce the data. The community's "hidden state far exceeds 83" claim is confirmed by this
+independent route.
 
 The cut-based result is the sharpest: any mechanism that rotates the deck by a
 plaintext-dependent amount leaves the two sibling decks rotated relative to each other after

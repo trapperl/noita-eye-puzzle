@@ -201,11 +201,42 @@ and 25, with single coincidences at 23 (W4/E5) and 25 (E4/W4).
 Layouts and depths that fit the distance curve in both languages cluster at spacings 4, 10,
 18, 38 and 40, but with no re-match discrimination this is not evidence of anything.
 
+### 4.2 Correction: the re-match cap does not exclude the family
+
+The 0.55 target treated the E4/E5 rate as a mean the mechanism must reach. It is a single
+observation, so the right question is how often the mechanism produces it. Simulating the
+60 best configurations per language (`harness/perturb.py`, 60 trials each):
+
+| change | window | mean matches | P(as many as observed) |
+|---|---|---|---|
+| 1 letter | next 23 | 14.0 (fi), 14.4 (en) | E1/W1 has 16: **0.48 / 0.50** |
+| 2 letters | next 23 | 10.7 / 10.6 | 16: 0.23 / 0.22 |
+| 4 letters | next 20 | 6.8 / 6.9 | E4/E5 has 11: **0.21 / 0.19** |
+
+So E1/W1 is the median outcome of a one-letter change and E4/E5 is an upper-quintile
+outcome of a four-letter change. The family reproduces both, and the earlier statement that
+its re-match rate is "capped" was the wrong test. The reading this implies: **East 1 and
+West 1 are the same text through position 50 except for one letter at 26** (the differing
+symbols at 27-29 and 34-37 are perturbation, not a second differing word), and **East 4 and
+East 5 share their text through about position 45 except for a four-letter field at
+22-25**. In this family a one-letter change perturbs exactly the letters whose slots lie
+between the two changed letters' slots, so the E1/W1 pattern says the letters at 27, 28,
+29, 34, 35, 36, 37 have slots inside that interval and the letters at 30-33 and 38-49
+outside it.
+
+The family therefore stands as the one candidate consistent with every measurement:
+no doubles, distance-4 excess, flat tail, chance coincidence between unrelated messages,
+and both re-match patterns. It is still only a candidate: its curve fit is unremarkable
+given the number of layouts tried, and nothing yet ties a specific layout or depth to the
+data. The decisive test is a key search under the mechanism, which is a constraint problem
+(decrypting under a candidate initial deck must visit only slot positions, for all nine
+messages from one initial deck), not an n-gram hill-climb.
+
 ## 5. What remains open
 
-- The mechanism. Non-rotating single-card-move decks are the surviving shape, but only if
-  the E4/E5 divergence is a one- or two-letter plaintext change; their re-match rate is
-  capped near 0.4 for four changed letters whatever the layout (4.1). Multi-component machines were tried only
+- The mechanism. Non-rotating single-card-move decks are the one shape consistent with
+  every measurement (4.2), but the slot layout and depth are undetermined and the family
+  is a guess that fits, not a derivation. Multi-component machines were tried only
   because of the tail at 9/13/17, which section 2.5 shows to be mostly a double-counting
   artefact.
 - The plaintext language and alphabet size. Nothing here distinguishes English from
@@ -216,10 +247,12 @@ Layouts and depths that fit the distance curve in both languages cluster at spac
 
 1. Read the community progress document before doing anything else; it was not reachable
    from the environment that produced this analysis.
-2. The arithmetic-progression layout search is done (4.1) and did not discriminate. What
-   would: pinning down how many letters differ between E4 and E5 at 22..25, since the
-   surviving family predicts 0.6 re-match for one changed letter and 0.35 for four. A
-   plaintext template hypothesis (numbered entries, East/West variants) is the way in. This is a constraint problem, not an n-gram hill-climb: decrypting
+2. The arithmetic-progression layout search is done (4.1) and did not discriminate. The
+   decisive test for the surviving family is a constraint-based key search (4.2): find an
+   initial deck, depth and slot set such that decrypting all nine messages visits only
+   slot positions. Naive backtracking is hopeless (the first ~120 symbols branch before
+   repeats constrain); a CP-SAT encoding over card positions per time step is the
+   plausible route, and it only succeeds if the mechanism is exactly right. This is a constraint problem, not an n-gram hill-climb: decrypting
    under a candidate initial deck must visit only slot positions.
 3. Use E4/E5 more precisely: the pattern of exactly which positions re-match after the
    divergence (runs of three, then a miss) is a direct measurement of how many cards one

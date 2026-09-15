@@ -44,6 +44,8 @@ python3 mech5.py en nospace          # conditional-alphabet family (small-state 
 gcc -O2 -o sweep sweep.c -lm && ./sweep ../corpus/en.idx ../corpus/en.meta ../corpus/target.txt > ../results/sweep_en.txt
                                      # 565k-config layout sweep (~5 min); run python3 export_corpus.py first
 python3 sweep_verify.py en nospace 300   # independent re-scoring of the top sweep configs
+python3 perturb.py fi space 60           # match counts after 1/2/4-letter changes vs E1/W1 and E4/E5
+pip install ortools && python3 cpsat_search.py synth fi 40 3 7 1 60 300   # CP-SAT key search, synthetic calibration
 ```
 
 Each script takes a language (`en`, `fi`) and `space` or `nospace` for whether the plaintext

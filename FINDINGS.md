@@ -232,6 +232,21 @@ data. The decisive test is a key search under the mechanism, which is a constrai
 (decrypting under a candidate initial deck must visit only slot positions, for all nine
 messages from one initial deck), not an n-gram hill-climb.
 
+### 4.3 Key-search feasibility
+
+`harness/cpsat_search.py` encodes the decisive test for the surviving family as a CP-SAT
+model (OR-tools): one integer position per card per time step, reified shift constraints
+for the pop-and-insert move, a shared initial deck across messages, and the constraint that
+every decryption step lands on one of at most 30 slot positions. On synthetic Finnish
+ciphertext with a known key: a single 60-symbol message solves in 27 s but is
+underdetermined (a spurious key satisfies it); three 100-symbol messages do not solve in
+600 s on 4 cores. The real instance is 1,027 steps across nine messages, so this encoding
+is not viable. A workable search would need to exploit the mechanism's structure: below the
+insertion depth the deck behaves as a move-to-front list, above it as a queue that only
+shifts upward, so positions are cumulative counts of outputs on one side of a card rather
+than free integers. That reformulation is the next real piece of work, and it is only worth
+doing if the mechanism is exactly right, which nothing here proves.
+
 ## 5. What remains open
 
 - The mechanism. Non-rotating single-card-move decks are the one shape consistent with
